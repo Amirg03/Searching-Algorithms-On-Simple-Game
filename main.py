@@ -68,13 +68,45 @@ class DFS_Agent(AbstractSearchAgent):
         * visted (list): list of visited nodes
         """
 
-        """visited = []
+        visited = []
         reachedToGoal = False
-        stack = []
         self.OPEN.append(s_start)
+        count = 0
+
+        while(not (reachedToGoal)):
+            current_state = self.OPEN.pop()
+            self.CLOSED.append(current_state)
+            visited.append(current_state)
+
+            """if(current_state==s_goal):
+                reachedToGoal = True
+                break
+            """
+
+            neighbors = self.get_neighbor(current_state)
+            for i in neighbors:
+                if(i==s_goal):
+                    self.PARENT[i] = current_state
+                    reachedToGoal = True
+             
+                if(not (i in self.CLOSED) and not (i in self.OPEN)):
+                    self.OPEN.append(i)
+                    self.PARENT[i] = current_state
+
+            if(reachedToGoal):
+                break
+            
 
 
-        while(reachedToGoal):"""
+        return self.extract_path(self.PARENT),visited
+
+            
+
+
+
+
+
+
             
 
         
