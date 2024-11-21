@@ -122,33 +122,52 @@ class AStar_Agent(AbstractSearchAgent):
         realCosts = dict()
         self.OPEN.append(s_start)
         realCosts[s_start] = 0
+        minAnswerCost = 10000
 
 
         while(True):
             minCost = 10000
             #Choosing best option from open list
             for i in self.OPEN:
-                if((realCosts[i] + max(abs(s_goal[0]-i[0]),abs(s_goal[1]-i[1]))) < minCost):
-                    minCost = realCosts[i] + max(abs(s_goal[0]-i[0]),abs(s_goal[1]-i[1]))
+                #if((realCosts[i] + max(abs(s_goal[0]-i[0]),abs(s_goal[1]-i[1]))) < minCost):
+                if((realCosts[i] + abs(s_goal[0]-i[0]) + abs(s_goal[1]-i[1])) < minCost):
+                    #minCost = realCosts[i] + max(abs(s_goal[0]-i[0]),abs(s_goal[1]-i[1]))
+                    minCost = (realCosts[i] + abs(s_goal[0]-i[0]) + abs(s_goal[1]-i[1]))
                     current_state = i
+            
+            if(minCost > minAnswerCost):
+                break
+                    
             
             visited.append(current_state)
                     
-            if(current_state == s_goal):
-                break
+            if(current_state == s_goal and realCosts[current_state] < minAnswerCost):
+                
+                minAnswerCost = realCosts[current_state]
                     
             neighbors = self.get_neighbor(current_state)
             
             for j in neighbors:
-                if(not (j in self.CLOSED) and not (j in self.OPEN)):
-                    self.OPEN.append(j)
-                    if(not (j in self.PARENT)):
+                if(not (j in self.CLOSED) ):
+                    if(j in self.OPEN and realCosts[j]>realCosts[current_state]+1):
                         self.PARENT[j] = current_state
-                        realCosts[j] = realCosts[current_state]+1
+                        if(abs(current_state[0]-j[0])+abs(current_state[1]-j[1])==1):
+                            realCosts[j] = realCosts[current_state]+1.00
+                        else:
+                            realCosts[j] = realCosts[current_state]+1.4142
+                    elif(not (j in self.OPEN)):
+                        self.OPEN.append(j)
+                    if(not (j in self.PARENT) or realCosts[j]>realCosts[current_state]+1):
+                        self.PARENT[j] = current_state
+                        if(abs(current_state[0]-j[0])+abs(current_state[1]-j[1])==1):
+                            realCosts[j] = realCosts[current_state]+1.00
+                        else:
+                            realCosts[j] = realCosts[current_state]+1.4142
             
             self.OPEN.remove(current_state)
             self.CLOSED.append(current_state)
 
+        print(realCosts[s_goal])
                         
         return self.extract_path(self.PARENT),visited
                     
